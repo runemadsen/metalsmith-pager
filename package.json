@@ -31,5 +31,8 @@
     "sinon": "^1.17.2",
     "tape": "^4.4.0",
     "tape-case": "^1.0.1"
+  },
+  "dependencies": {
+    "chalk": "^1.1.1"
   }
 }
