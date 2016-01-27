@@ -25,14 +25,12 @@ exports = module.exports = function pager(options){
     });
 
 
-    let currentPageIndex = 1;
 
-    groupedPosts.reduce(function(fileList, collectionEntry) {
+    groupedPosts.reduce(function(fileList, collectionEntry, index) {
 
-      let pageDist = pagePattern.replace(/:PAGE/, currentPageIndex);
+      let pageDist = pagePattern.replace(/:PAGE/, (Math.floor(index / elementsPerPage) + 1));
 
       if (fileList[pageDist] == null){
-
         fileList[pageDist] = {
           layout: 'post.html',
           contents: template,
@@ -40,14 +38,9 @@ exports = module.exports = function pager(options){
             files: []
           }
         }
-
       }
 
-      let elementsInPageCount = fileList[pageDist].pagination.files.push(collectionEntry);
-
-      if (elementsInPageCount >= elementsPerPage){
-        currentPageIndex++;
-      }
+      fileList[pageDist].pagination.files.push(collectionEntry);
 
       return fileList;
 
