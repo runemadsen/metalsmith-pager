@@ -26,12 +26,12 @@ ms
     }
   }))
 
-  /*
+  
   .use(paginate({
     collection: 'posts',
     quantity: 5
   }))
-  */
+
 
   .use(markdown())
   .use(evaluate({
