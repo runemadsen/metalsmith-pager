@@ -17,19 +17,23 @@ exports = module.exports = function pager(options){
   return function(files, metalsmith, done){
 
     const template = fs.readFileSync('./sample/src/__partials/pagination.html');
+    const pagePattern = options.pagePattern || 'page/:PAGE/index.html';
+    const elementsPerPage = options.elementsPerPage || 5;
 
     var groupedPosts = filterObj(files, function(all, k){
       return Array.isArray(all[k].collection) && all[k].collection.indexOf(options.collection) >= 0;
     });
 
 
-    let currPage = 1;
+    let currentPageIndex = 1;
 
-    groupedPosts.reduce(function(fileList, currentPost) {
+    groupedPosts.reduce(function(fileList, collectionEntry) {
 
-      if (fileList['page/'+currPage+'/index.html'] == null){
+      let pageDist = pagePattern.replace(/:PAGE/, currentPageIndex);
 
-        fileList['page/'+currPage+'/index.html'] = {
+      if (fileList[pageDist] == null){
+
+        fileList[pageDist] = {
           layout: 'post.html',
           contents: template,
           pagination: {
@@ -39,10 +43,10 @@ exports = module.exports = function pager(options){
 
       }
 
-      fileList['page/'+currPage+'/index.html'].pagination.files.push(currentPost);
+      let elementsInPageCount = fileList[pageDist].pagination.files.push(collectionEntry);
 
-      if (fileList['page/'+currPage+'/index.html'].pagination.files.length >= 4){
-        currPage++;
+      if (elementsInPageCount >= elementsPerPage){
+        currentPageIndex++;
       }
 
       return fileList;
