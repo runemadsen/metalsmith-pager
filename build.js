@@ -51,7 +51,8 @@ ms
 
     // the path where the pagination template is located.
     // it should be relative to the path configured as "source" for metalsmith.
-    paginationTemplate: '__partials/pagination.html'
+    paginationTemplatePath: '__partials/pagination.html',
+
 
   }))
 
