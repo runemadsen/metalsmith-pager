@@ -5,7 +5,7 @@ const tcase = require('tape-case');
 
 const type = require('../lib/get-type');
 
-tcase([
+const testcases = [
   { description: 'Boolean', args: [ true ], result: 'boolean' },
   { description: 'Number', args: [ 42 ], result: 'number' },
   { description: 'String', args: [ 'hello' ], result: 'string' },
@@ -17,4 +17,6 @@ tcase([
   { description: 'Function', args: [ x=>x ], result: 'function' },
   { description: 'Date', args: [ new Date() ], result: 'date' },
   { description: 'RegExp', args: [ /^hello/i ], result: 'regexp' }
-], subject => type(subject));
+];
+
+tcase(testcases, subject => type(subject));
