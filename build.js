@@ -6,6 +6,7 @@ const path = require('path');
 const Metalsmith = require('metalsmith');
 const collections = require('metalsmith-collections');
 const markdown = require('metalsmith-markdown');
+const permalinks = require('metalsmith-permalinks');
 const layouts = require('metalsmith-layouts');
 const evaluate = require('metalsmith-in-place');
 
@@ -60,6 +61,7 @@ ms
 
 
   .use(markdown())
+  .use(permalinks(':title'))
   .use(evaluate({
     engine: 'handlebars',
     partials: './sample/src/__partials',

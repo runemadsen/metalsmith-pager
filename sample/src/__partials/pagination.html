@@ -1,4 +1,11 @@
 
-{{#each pagination.files}}
-  {{ this.title }}
-{{/each}}
+<section class='archive'>
+  {{#each pagination.files}}
+    <div class='archive-entry'>
+      <h2>
+        <a href='{{this.path}}/' title='{{this.title}}'>{{this.title}}</a>
+      </h2>
+      {{{this.contents}}}
+    </div>
+  {{/each}}
+</section>
