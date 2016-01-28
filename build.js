@@ -10,6 +10,11 @@ const permalinks = require('metalsmith-permalinks');
 const layouts = require('metalsmith-layouts');
 const evaluate = require('metalsmith-in-place');
 
+
+// register handlebars helpers
+// these are only needed to enhance the demo.
+require('./handlebars-helper');
+
 function skip(options){
   return function(files, metalsmith, done){
     for (let k in files){
