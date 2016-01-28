@@ -7,22 +7,35 @@ const path = require('path');
 
 const fatal = require('./lib/log-fatal-error');
 const filterObj = require('./lib/filter-object');
+const type = require('./lib/get-type');
 
 
+function validateSettings(settings){
 
-
-exports = module.exports = function pager(options){
-
-  if (!options.collection){
+  if (!settings.collection){
     throw new TypeError('The "collection" setting must be specified');
   }
 
-  if (!options.layoutName){
+  if (!settings.layoutName){
     throw new TypeError('The "layoutName" setting must be specified');
   }
 
-  if (!options.paginationTemplatePath){
+  if (!settings.paginationTemplatePath){
     throw new TypeError('The "paginationTemplatePath" setting must be specified');
+  }
+
+  if (type(settings.elementsPerPage) != 'number'){
+    throw new TypeError('The "elementsPerPage" setting must be specified as a number');
+  }
+
+}
+
+exports = module.exports = function pager(options){
+
+  try{
+    validateSettings(options);
+  } catch(err){
+    return void fatal(err.message);
   }
 
   return function(files, metalsmith, done){
@@ -43,13 +56,14 @@ exports = module.exports = function pager(options){
 
     const template = fs.readFileSync(paginationTemplatePath);
 
-
-    var groupedPosts = filterObj(files, function(all, k){
+    const groupedPosts = filterObj(files, function(all, k){
       return Array.isArray(all[k].collection) && all[k].collection.indexOf(options.collection) >= 0;
     });
 
 
-
+    //
+    // enrich the metalsmith "files" collections with the pages
+    // which contains the "paginated list of pages"
     groupedPosts.reduce(function(fileList, collectionEntry, index) {
 
       let pageDist = pagePattern.replace(/:PAGE/, (Math.floor(index / elementsPerPage) + 1));
