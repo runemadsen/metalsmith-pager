@@ -53,6 +53,8 @@ ms
     // it should be relative to the path configured as "source" for metalsmith.
     paginationTemplatePath: '__partials/pagination.html',
 
+    // the name of the layout that should be used to create the page.
+    layoutName: 'archive.html'
 
   }))
 

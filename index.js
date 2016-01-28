@@ -17,6 +17,9 @@ exports = module.exports = function pager(options){
     throw new TypeError('The "collection" setting must be specified');
   }
 
+  if (!options.layoutName){
+    throw new TypeError('The "layoutName" setting must be specified');
+  }
 
   if (!options.paginationTemplatePath){
     throw new TypeError('The "paginationTemplatePath" setting must be specified');
@@ -53,7 +56,7 @@ exports = module.exports = function pager(options){
 
       if (fileList[pageDist] == null){
         fileList[pageDist] = {
-          layout: 'post.html',
+          layout: options.layoutName,
           contents: template,
           pagination: {
             files: []
