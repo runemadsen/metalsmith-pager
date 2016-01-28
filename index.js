@@ -66,14 +66,16 @@ exports = module.exports = function pager(options){
     // which contains the "paginated list of pages"
     groupedPosts.reduce(function(fileList, collectionEntry, index) {
 
-      let pageDist = pagePattern.replace(/:PAGE/, (Math.floor(index / elementsPerPage) + 1));
+      let currentPage = Math.floor(index / elementsPerPage) + 1;
+      let pageDist = pagePattern.replace(/:PAGE/, currentPage);
 
       if (fileList[pageDist] == null){
         fileList[pageDist] = {
           layout: options.layoutName,
           contents: template,
           pagination: {
-            files: []
+            files: [],
+            current: currentPage
           }
         }
       }
