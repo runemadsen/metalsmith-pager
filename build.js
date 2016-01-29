@@ -52,8 +52,13 @@ ms
     // in the same page.
     elementsPerPage: 5,
 
-    // the pattern ...
+    // the pattern for the path at which the page trunk should
+    // be available
     pagePattern: 'page/:PAGE/index.html',
+
+    // the format in which the page number should be displayed
+    // in the page navigation bar
+    pageLabel: '[ :PAGE ]',
 
     // the path where the pagination template is located.
     // it should be relative to the path configured as "source" for metalsmith.

@@ -42,6 +42,8 @@ exports = module.exports = function pager(options){
 
     const pagePattern = options.pagePattern || 'page/:PAGE/index.html';
     const elementsPerPage = options.elementsPerPage || 5;
+    const pageLabel = options.pageLabel || ':PAGE';
+
     const paginationTemplatePath = path.join(metalsmith._source, options.paginationTemplatePath);
 
     try{
@@ -61,31 +63,36 @@ exports = module.exports = function pager(options){
     });
 
 
+    const pageKeys = new Set();
+
     //
     // enrich the metalsmith "files" collections with the pages
     // which contains the "paginated list of pages"
     groupedPosts.reduce(function(fileList, collectionEntry, index) {
 
-      let currentPage = Math.floor(index / elementsPerPage) + 1;
-      let pageDist = pagePattern.replace(/:PAGE/, currentPage);
+      const currentPage = Math.floor(index / elementsPerPage) + 1;
+      const pageDist = pagePattern.replace(/:PAGE/, currentPage);
 
       if (fileList[pageDist] == null){
         fileList[pageDist] = {
-          layout: options.layoutName,
           contents: template,
-          pagination: {
-            files: [],
-            current: currentPage
-          }
+          layout: options.layoutName,
+          pagination: { current: currentPage, files: [] }
         }
       }
 
+      pageKeys.add(pageDist);
       fileList[pageDist].pagination.files.push(collectionEntry);
 
       return fileList;
 
     }, files);
 
+
+    const pagesInfo = [...pageKeys].map((el, i) => ({ path: el, index: i+1, label: pageLabel.replace(/:PAGE/, i+1) }));
+    for (let key of pageKeys.values()){
+      files[key].pages = pagesInfo;
+    }
 
 
     done();
