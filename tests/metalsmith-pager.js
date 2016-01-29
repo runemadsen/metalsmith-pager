@@ -1,20 +1,24 @@
 
 'use strict';
 
+const fs = require('fs');
+
 const tape = require('tape');
 const sinon = require('sinon');
 
-const pager = require('../index');
+
+
+const sut = require('../index');
 
 
 tape('metalsmith-pager.js:', function(t) { t.end(); });
 
-tape('check validate settings', function(t) {
+tape('check settings are validated', function(t) {
 
   const logSpy = sinon.spy(console, 'log');
   const options = {};
 
-  let res1 = pager(options);
+  let res1 = sut(options);
   t.ok(logSpy.calledOnce, 'log fatal error');
   t.ok(logSpy.getCall(0).args[0].indexOf('The "collection" setting must be specified') > 0, 'check log info');
   t.strictEqual(res1, undefined, 'returns void');
@@ -23,7 +27,7 @@ tape('check validate settings', function(t) {
 
   options.collection = 'posts';
 
-  let res2 = pager(options);
+  let res2 = sut(options);
   t.ok(logSpy.calledOnce, 'log fatal error');
   t.ok(logSpy.getCall(0).args[0].indexOf('The "layoutName" setting must be specified') > 0, 'check log info');
   t.strictEqual(res2, undefined, 'returns void');
@@ -32,7 +36,7 @@ tape('check validate settings', function(t) {
 
   options.layoutName = 'archive.html';
 
-  let res3 = pager(options);
+  let res3 = sut(options);
   t.ok(logSpy.calledOnce, 'log fatal error');
   t.ok(logSpy.getCall(0).args[0].indexOf('The "paginationTemplatePath" setting must be specified') > 0, 'check log info');
   t.strictEqual(res3, undefined, 'returns void');
@@ -41,7 +45,7 @@ tape('check validate settings', function(t) {
 
   options.paginationTemplatePath = '__partials/pager.html';
 
-  let res4 = pager(options);
+  let res4 = sut(options);
   t.ok(logSpy.calledOnce, 'log fatal error');
   t.ok(logSpy.getCall(0).args[0].indexOf('The "elementsPerPage" setting must be specified') > 0, 'check log info');
   t.strictEqual(res4, undefined, 'returns void');
@@ -50,8 +54,108 @@ tape('check validate settings', function(t) {
 
   options.elementsPerPage = 5;
 
-  let res5 = pager(options);
+  let res5 = sut(options);
   t.strictEqual(typeof res5, 'function', 'returns the plugin function');
+
+  t.end();
+
+});
+
+tape('metalsmith "done" callback is called when pager plugin terminates its execution', function(t) {
+
+  const options = {
+    collection: 'posts',
+    elementsPerPage: 3,
+    paginationTemplatePath: '__partials/pagination.html',
+    layoutName: 'archive.html'
+  };
+
+  const pager = sut(options);
+
+
+  const files = {
+    '/post1': { collection: ['pages'], contents: new Buffer('Hello world!') },
+    '/post2': { collection: ['posts'], contents: new Buffer('Latest is a post! YAHOO.') },
+  }
+
+  const metalsmith = {
+    _source: ''
+  }
+
+  const doneSpy = sinon.spy();
+
+  let accessSyncStub = sinon.stub(fs, 'accessSync');
+  let readFileSync = sinon.stub(fs, 'readFileSync');
+
+  pager(files, metalsmith, doneSpy);
+
+  t.ok(doneSpy.calledOnce, 'When computation ends, the "done" callback is executed.');
+
+  accessSyncStub.restore();
+  readFileSync.restore();
+
+  t.end();
+
+});
+
+tape('the "pagination" property is populated with the paginated data (pagination by collection)', function(t) {
+
+  const options = {
+    collection: 'posts',
+    elementsPerPage: 3,
+    pagePattern: ':PAGE/index.html',
+    pageLabel: '<:PAGE>',
+    paginationTemplatePath: '__partials/pagination.html',
+    layoutName: 'archive.html'
+  };
+
+  const pager = sut(options);
+
+
+  const files = {
+    '/post1': { collection: ['pages'], contents: new Buffer('Hello world!') },
+    '/post2': { collection: ['posts', 'pages'], contents: new Buffer('This is both a post both a page.') },
+    '/post3': { collection: ['pages', 'posts'], contents: new Buffer('This is both a page both a post. Strange.') },
+    '/post4': { collection: ['posts'], contents: new Buffer('Yeah, really strange!') },
+    '/post5': { collection: ['posts'], contents: new Buffer('Cool Stuff.') },
+    '/post6': { collection: ['posts'], contents: new Buffer('The sixth post.') },
+    '/post7': { collection: ['posts'], contents: new Buffer('Just another post.') },
+    '/post8': { collection: ['posts'], contents: new Buffer('Almost done here.') },
+    '/post9': { collection: [], contents: new Buffer('This is nothing.') },
+    '/post10': { collection: ['posts'], contents: new Buffer('Latest is a post! YAHOO.') },
+  }
+
+  const metalsmith = {
+    _source: ''
+  }
+
+  const doneSpy = sinon.spy();
+
+
+  let accessSyncStub = sinon.stub(fs, 'accessSync');
+  let readFileSync = sinon.stub(fs, 'readFileSync').returns('hbs contents');
+
+  pager(files, metalsmith, doneSpy);
+
+  t.ok(files.hasOwnProperty('1/index.html') && files.hasOwnProperty('2/index.html') && files.hasOwnProperty('3/index.html'), 'check props');
+
+  ['1/index.html', '2/index.html', '3/index.html'].forEach(function(prop, i) {
+    t.ok(files.hasOwnProperty(prop), 'check props');
+
+    t.equal(files[prop].pages.length, 3, 'check number of pages');
+    t.equal(files[prop].pages.map(x => x.label)[i], '<'+(i+1)+'>', 'check page label');
+
+    t.equal(files[prop].contents, 'hbs contents', 'check contents');
+    t.equal(files[prop].layout, 'archive.html', 'check layout');
+
+    t.equal(files[prop].pagination.files.length, i<2 ? 3 : 2, 'check files per page (page '+prop+')');
+
+  });
+
+  t.ok(!files.hasOwnProperty('4/index.html'), 'check props missing');
+
+  accessSyncStub.restore();
+  readFileSync.restore();
 
   t.end();
 
