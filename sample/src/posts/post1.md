@@ -1,6 +1,6 @@
 ---
 layout: post.html
-date: 2015-06-01
+date: 2014-06-01
 title: Hello world!
 tags: life, tech, science
 ---

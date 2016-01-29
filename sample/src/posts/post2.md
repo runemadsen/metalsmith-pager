@@ -1,6 +1,6 @@
 ---
 layout: post.html
-date: 2015-06-10
+date: 2014-06-10
 title: Another post
 tags: life
 ---
