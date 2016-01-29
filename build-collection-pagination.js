@@ -51,6 +51,7 @@ ms
    */
   .use(paginate({
 
+    // the name of the collection the files belong
     collection: 'posts',
 
     // the maximum number of element that could be displayed
