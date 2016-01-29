@@ -13,53 +13,30 @@ const sut = require('../index');
 
 tape('metalsmith-pager.js:', function(t) { t.end(); });
 
+
 tape('check settings are validated', function(t) {
 
-  const logSpy = sinon.spy(console, 'log');
   const options = {};
 
-  let res1 = sut(options);
-  t.ok(logSpy.calledOnce, 'log fatal error');
-  t.ok(logSpy.getCall(0).args[0].indexOf('The "collection" setting must be specified') > 0, 'check log info');
-  t.strictEqual(res1, undefined, 'returns void');
-
-  logSpy.reset();
+  t.throws(()=>sut(options), /The "collection" setting must be specified/i, 'check exception "collection"');
 
   options.collection = 'posts';
-
-  let res2 = sut(options);
-  t.ok(logSpy.calledOnce, 'log fatal error');
-  t.ok(logSpy.getCall(0).args[0].indexOf('The "layoutName" setting must be specified') > 0, 'check log info');
-  t.strictEqual(res2, undefined, 'returns void');
-
-  logSpy.reset();
+  t.throws(()=>sut(options), /The "layoutName" setting must be specified/i, 'check exception "layoutName"');
 
   options.layoutName = 'archive.html';
-
-  let res3 = sut(options);
-  t.ok(logSpy.calledOnce, 'log fatal error');
-  t.ok(logSpy.getCall(0).args[0].indexOf('The "paginationTemplatePath" setting must be specified') > 0, 'check log info');
-  t.strictEqual(res3, undefined, 'returns void');
-
-  logSpy.reset();
+  t.throws(()=>sut(options), /The "paginationTemplatePath" setting must be specified/i, 'check exception "paginationTemplatePath"');
 
   options.paginationTemplatePath = '__partials/pager.html';
-
-  let res4 = sut(options);
-  t.ok(logSpy.calledOnce, 'log fatal error');
-  t.ok(logSpy.getCall(0).args[0].indexOf('The "elementsPerPage" setting must be specified') > 0, 'check log info');
-  t.strictEqual(res4, undefined, 'returns void');
-
-  logSpy.reset();
+  t.throws(()=>sut(options), /The "elementsPerPage" setting must be specified/i, 'check exception "elementsPerPage"');
 
   options.elementsPerPage = 5;
 
-  let res5 = sut(options);
-  t.strictEqual(typeof res5, 'function', 'returns the plugin function');
+  t.equal(typeof sut(options), 'function', 'returns the plugin function');
 
   t.end();
 
 });
+
 
 tape('metalsmith "done" callback is called when pager plugin terminates its execution', function(t) {
 
@@ -84,14 +61,12 @@ tape('metalsmith "done" callback is called when pager plugin terminates its exec
 
   const doneSpy = sinon.spy();
 
-  let accessSyncStub = sinon.stub(fs, 'accessSync');
   let readFileSync = sinon.stub(fs, 'readFileSync');
 
   pager(files, metalsmith, doneSpy);
 
   t.ok(doneSpy.calledOnce, 'When computation ends, the "done" callback is executed.');
 
-  accessSyncStub.restore();
   readFileSync.restore();
 
   t.end();
@@ -131,8 +106,6 @@ tape('the "pagination" property is populated with the paginated data (pagination
 
   const doneSpy = sinon.spy();
 
-
-  let accessSyncStub = sinon.stub(fs, 'accessSync');
   let readFileSync = sinon.stub(fs, 'readFileSync').returns('hbs contents');
 
   pager(files, metalsmith, doneSpy);
@@ -154,7 +127,6 @@ tape('the "pagination" property is populated with the paginated data (pagination
 
   t.ok(!files.hasOwnProperty('4/index.html'), 'check props missing');
 
-  accessSyncStub.restore();
   readFileSync.restore();
 
   t.end();
