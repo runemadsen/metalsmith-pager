@@ -44,6 +44,11 @@ ms
   }))
 
 
+  /*
+   * metalsmith-pager
+   * In this example we're creating a pagination for the elements
+   * belonging to a determined collection.
+   */
   .use(paginate({
 
     collection: 'posts',
@@ -81,7 +86,7 @@ ms
     engine: 'handlebars',
     directory: './sample/src/__layouts'
   }))
-  .destination('./sample/dist')
+  .destination('./sample/dist-collection-pagination')
   .build(function(err) {
     if (err) {
       throw err;
