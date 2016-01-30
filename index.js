@@ -55,6 +55,7 @@ exports = module.exports = function pager(options){
 
       if (fileList[pageDist] == null){
         fileList[pageDist] = {
+          canonical: pageDist,
           contents: template,
           layout: options.layoutName,
           pagination: { current: currentPage, files: [] }
