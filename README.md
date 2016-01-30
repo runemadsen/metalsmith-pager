@@ -17,6 +17,7 @@ npm i -s metalsmith-pager
 ## demo
 
 Take a look at the file build-collection-pagination.js to have a demo of the correct usage.
+The results are available under `sample/dist-collection-pagination` folder.
 
 ## options
 
