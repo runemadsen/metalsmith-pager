@@ -6,13 +6,9 @@ const fs = require('fs');
 const tape = require('tape');
 const sinon = require('sinon');
 
-
-
 const sut = require('../index');
 
-
 tape('metalsmith-pager.js:', function(t) { t.end(); });
-
 
 tape('check settings are validated', function(t) {
 
@@ -36,7 +32,6 @@ tape('check settings are validated', function(t) {
   t.end();
 
 });
-
 
 tape('metalsmith "done" callback is called when pager plugin terminates its execution', function(t) {
 

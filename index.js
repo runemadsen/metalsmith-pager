@@ -11,10 +11,6 @@ const type = require('./lib/get-type');
 
 exports = module.exports = function pager(options){
 
-
-  }
-
-
   if (!options.collection){
     throw new Error('The "collection" setting must be specified')
   }
