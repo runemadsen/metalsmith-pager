@@ -7,9 +7,10 @@ hbs.registerHelper('log', function(val) {
   console.log(val)
 });
 
-hbs.registerHelper('ifEqual', function(v1, v2, options) {
-  if (v1 === v2) {
-    return options.fn(this);
-  }
-  return options.inverse(this);
+hbs.registerHelper('ifEqual', function(val1, vval2, options) {
+  return val1 === vval2 ? options.fn(this) : options.inverse(this);
+});
+
+hbs.registerHelper('lessThan', function (val, limit, options) {
+  return val < limit ? options.fn(this) : options.inverse(this);
 });

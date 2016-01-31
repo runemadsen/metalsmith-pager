@@ -1,0 +1,11 @@
+---
+layout: home.html
+---
+
+<ul class='latest-post'>
+{{#each posts}}
+  {{#lessThan @index 5}}
+    <li>{{this.title}}</li>
+  {{/lessThan}}
+{{/each}}
+</ul>
