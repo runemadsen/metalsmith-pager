@@ -1,7 +1,7 @@
 ---
 layout: post.html
 date: 2015-11-25
-title: November
+title: November is boring
 tags: general
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post.html
 date: 2015-11-30
-title: November
+title: Last of November
 tags: tech
 ---
 

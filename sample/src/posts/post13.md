@@ -1,7 +1,7 @@
 ---
 layout: post.html
 date: 2015-11-23
-title: November
+title: November, bho
 tags: life, politics
 ---
 
