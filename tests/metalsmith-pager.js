@@ -75,6 +75,7 @@ tape('the "pagination" property is populated with the paginated data (pagination
     elementsPerPage: 3,
     pagePattern: ':PAGE/index.html',
     pageLabel: '<:PAGE>',
+    index: 'boom.html',
     paginationTemplatePath: '__partials/pagination.html',
     layoutName: 'archive.html'
   };
@@ -83,6 +84,7 @@ tape('the "pagination" property is populated with the paginated data (pagination
 
 
   const files = {
+    'boom.html': { contents: new Buffer('The index!') },
     '/post1': { collection: ['pages'], contents: new Buffer('Hello world!') },
     '/post2': { collection: ['posts', 'pages'], contents: new Buffer('This is both a post both a page.') },
     '/post3': { collection: ['pages', 'posts'], contents: new Buffer('This is both a page both a post. Strange.') },
@@ -119,6 +121,9 @@ tape('the "pagination" property is populated with the paginated data (pagination
     t.equal(files[prop].pagination.files.length, i<2 ? 3 : 2, 'check files per page (page '+prop+')');
 
   });
+
+  t.deepEqual(files['boom.html'].pagination, files['1/index.html'].pagination, 'check index pagination');
+  t.deepEqual(files['boom.html'].pages, files['1/index.html'].pages, 'check index pagination links');
 
   t.ok(!files.hasOwnProperty('4/index.html'), 'check props missing');
 

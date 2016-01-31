@@ -3,9 +3,13 @@ layout: home.html
 ---
 
 <ul class='latest-post'>
-{{#each posts}}
-  {{#lessThan @index 5}}
-    <li>{{this.title}}</li>
-  {{/lessThan}}
-{{/each}}
+  {{#each pagination.files}}
+    <li>
+      <h2>
+        <a href='{{this.path}}/' title='{{this.title}}'>{{this.title}}</a>
+      </h2>
+    </li>
+  {{/each}}
 </ul>
+
+{{> pagination-link}}

@@ -51,26 +51,30 @@ ms
    */
   .use(paginate({
 
-    // the name of the collection the files belong
+    // name of the collection the files belong
     collection: 'posts',
 
-    // the maximum number of element that could be displayed
+    // maximum number of element that could be displayed
     // in the same page.
     elementsPerPage: 5,
 
-    // the pattern for the path at which the page trunk should
+    // pattern for the path at which the page trunk should
     // be available
     pagePattern: 'page/:PAGE/index.html',
 
-    // the format in which the page number should be displayed
+    // format in which the page number should be displayed
     // in the page navigation bar
     pageLabel: '[ :PAGE ]',
 
-    // the path where the pagination template is located.
+    // name of the file that will be the homepage.
+    // this file will have the same info of the page "page/1/index.html".
+    index: 'index.html',
+
+    // path where the pagination template is located.
     // it should be relative to the path configured as "source" for metalsmith.
     paginationTemplatePath: '__partials/pagination.html',
 
-    // the name of the layout that should be used to create the page.
+    // name of the layout that should be used to create the page.
     layoutName: 'archive.html'
 
   }))

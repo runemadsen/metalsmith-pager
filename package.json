@@ -1,8 +1,11 @@
 {
   "name": "metalsmith-pager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Metalsmith plugin for pagination",
   "main": "index.js",
+  "engines": {
+    "node": "5.0.0"  
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brunoscopelliti/metalsmith-pager.git"

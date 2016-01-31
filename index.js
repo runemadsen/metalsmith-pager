@@ -75,6 +75,11 @@ exports = module.exports = function pager(options){
       files[key].pages = pagesInfo;
     }
 
+    if (options.index && type(files[options.index]) == 'object'){
+      files[options.index].pagination = files[pagePattern.replace(/:PAGE/, 1)].pagination;
+      files[options.index].pages = pagesInfo;
+    }
+
 
     done();
 

@@ -37,12 +37,19 @@ pagePattern
 ---
 The pattern for the path at which the page trunk should be available.
 It must contain the :PAGE placeholder, that will be replaced with the page number.
+Default value is "page/:PAGE/index.html".
 
 pageLabel
 ---
 The format in which the page number should be displayed in the page navigation bar.
 It must contain the :PAGE placeholder.
 Default value is simply :PAGE.
+
+index
+---
+The name of the file that will be the homepage.
+This file will have the same info of the page "page/1/index.html".
+This parameter is not mandatory.
 
 paginationTemplatePath
 ---
