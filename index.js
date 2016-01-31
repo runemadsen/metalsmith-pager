@@ -4,7 +4,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const filterObj = require('./lib/filter-object');
 const type = require('./lib/get-type');
 
 
@@ -35,39 +34,49 @@ exports = module.exports = function pager(options){
     const pageLabel = options.pageLabel || ':PAGE';
 
 
+    const metadata = metalsmith.metadata();
+
+
     const template = fs.readFileSync(path.join(metalsmith._source, options.paginationTemplatePath));
 
 
-    const groupedPosts = filterObj(files, function(all, k){
-      return Array.isArray(all[k].collection) && all[k].collection.indexOf(options.collection) >= 0;
-    });
+    let groupedPosts;
+
+    if (metadata.collections && metadata.collections[options.collection]){
+      groupedPosts = metadata.collections[options.collection];
+    }
+    else {
+      throw new Error(`The collection ${options.collection} does not exist.`);
+    }
+
 
 
     const pageKeys = new Set();
 
     //
-    // enrich the metalsmith "files" collections with the pages
-    // which contains the "paginated list of pages"
-    groupedPosts.reduce(function(fileList, collectionEntry, index) {
+    // enrich the metalsmith "files" collection with the pages
+    // which contain the "paginated list of pages"
+    groupedPosts
+      .reduce(function(fileList, collectionEntry, index) {
 
-      const currentPage = Math.floor(index / elementsPerPage) + 1;
-      const pageDist = pagePattern.replace(/:PAGE/, currentPage);
+        const currentPage = Math.floor(index / elementsPerPage) + 1;
+        const pageDist = pagePattern.replace(/:PAGE/, currentPage);
 
-      if (fileList[pageDist] == null){
-        fileList[pageDist] = {
-          canonical: pageDist,
-          contents: template,
-          layout: options.layoutName,
-          pagination: { current: currentPage, files: [] }
+        if (fileList[pageDist] == null){
+          fileList[pageDist] = {
+            canonical: pageDist,
+            contents: template,
+            layout: options.layoutName,
+            pagination: { current: currentPage, files: [] }
+          }
         }
-      }
 
-      pageKeys.add(pageDist);
-      fileList[pageDist].pagination.files.push(collectionEntry);
+        pageKeys.add(pageDist);
+        fileList[pageDist].pagination.files.push(collectionEntry);
 
-      return fileList;
+        return fileList;
 
-    }, files);
+      }, files);
 
 
     const pagesInfo = [...pageKeys].map((el, i) => ({ path: el, index: i+1, label: pageLabel.replace(/:PAGE/, i+1) }));

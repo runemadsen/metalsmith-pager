@@ -51,7 +51,20 @@ tape('metalsmith "done" callback is called when pager plugin terminates its exec
   }
 
   const metalsmith = {
-    _source: ''
+    _source: '',
+    metadata: function() {
+      return {
+        collections: {
+          posts: [{
+            path: '/post1',
+            contents: new Buffer('Hello world!')
+          }, {
+            path: '/post2',
+            contents: new Buffer('Latest is a post! YAHOO.')
+          }]
+        }
+      };
+    }
   }
 
   const doneSpy = sinon.spy();
@@ -98,7 +111,38 @@ tape('the "pagination" property is populated with the paginated data (pagination
   }
 
   const metalsmith = {
-    _source: ''
+    _source: '',
+    metadata: function() {
+      return {
+        collections: {
+          posts: [{
+            path: '/post2',
+            contents: new Buffer('This is both a post both a page.')
+          }, {
+            path: '/post3',
+            contents: new Buffer('This is both a page both a post. Strange.')
+          }, {
+            path: '/post4',
+            contents: new Buffer('Yeah, really strange!')
+          }, {
+            path: '/post5',
+            contents: new Buffer('Cool Stuff.')
+          }, {
+            path: '/post6',
+            contents: new Buffer('The sixth post.')
+          }, {
+            path: '/post7',
+            contents: new Buffer('Just another post.')
+          }, {
+            path: '/post8',
+            contents: new Buffer('Almost done here.')
+          }, {
+            path: '/post10',
+            contents: new Buffer('Latest is a post! YAHOO.')
+          }]
+        }
+      };
+    }
   }
 
   const doneSpy = sinon.spy();
