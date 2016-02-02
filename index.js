@@ -56,33 +56,38 @@ exports = module.exports = function pager(options){
     //
     // enrich the metalsmith "files" collection with the pages
     // which contain the "paginated list of pages"
-    groupedPosts
-      .reduce(function(fileList, collectionEntry, index) {
+    groupedPosts.reduce(function(fileList, collectionEntry, index) {
 
-        const currentPage = Math.floor(index / elementsPerPage) + 1;
-        const pageDist = pagePattern.replace(/:PAGE/, currentPage);
+      const currentPage = Math.floor(index / elementsPerPage) + 1;
+      const pageDist = pagePattern.replace(/:PAGE/, currentPage);
 
-        if (fileList[pageDist] == null){
-          fileList[pageDist] = {
-            canonical: pageDist,
-            contents: template,
-            layout: options.layoutName,
-            pagination: { current: currentPage, files: [] }
+      if (fileList[pageDist] == null){
+        fileList[pageDist] = {
+          canonical: pageDist,
+          contents: template,
+          layout: options.layoutName,
+          pagination: {
+            current: currentPage,
+            files: []
           }
         }
+      }
 
-        pageKeys.add(pageDist);
-        fileList[pageDist].pagination.files.push(collectionEntry);
+      pageKeys.add(pageDist);
+      fileList[pageDist].pagination.files.push(collectionEntry);
 
-        return fileList;
+      return fileList;
 
-      }, files);
+    }, files);
 
 
     const pagesInfo = [...pageKeys].map((el, i) => ({ path: el, index: i+1, label: pageLabel.replace(/:PAGE/, i+1) }));
-    for (let key of pageKeys.values()){
-      files[key].pages = pagesInfo;
-    }
+
+    pagesInfo.forEach(function(el, i, all){
+      files[el.path].pages = all;
+      files[el.path].pagination.prev = i > 0 ? all[i-1].path : null;
+      files[el.path].pagination.next = i < all.length-1 ? all[i+1].path : null;
+    });
 
     if (options.index && type(files[options.index]) == 'object'){
       files[options.index].pagination = files[pagePattern.replace(/:PAGE/, 1)].pagination;

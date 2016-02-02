@@ -19,6 +19,49 @@ npm i -s metalsmith-pager
 Take a look at the file build-collection-pagination.js to have a demo of the correct usage.
 The results are available under `sample/dist-collection-pagination` folder.
 
+## results
+
+`metalsmith-pager` add the file for the paginated content to the metalsmith files collection. The key of these files respects the pattern defined by the option `pagePattern`.
+
+From the template used by the paginated files it's possible to access the following properties:
+
+```
+files = {
+
+  'index.html': ... ,
+
+  ...
+
+  'page/1/index.html': {
+    pagination: {
+
+      // index of the current page.
+      current: 1,
+
+      // path of the previous paginated trunk.
+      // it's null in case the current page is the first trunk.
+      prev: null,
+
+      // path of the next paginated trunk.
+      // it's null in case the current page is the last trunk.
+      next: 'page/2/index.html',
+
+      // list of files belonging to this trunk.
+      // it's an array of metalsmith file object.
+      files: []
+    },
+
+    // list of all the pages created
+    pages: [
+      { path: 'page/1/index.html', index: 1, label: '[ 1 ]' },
+      { path: 'page/2/index.html', index: 2, label: '[ 2 ]' },
+      ...
+    ]
+  }
+
+}
+```
+
 ## options
 
 `metalsmith-pager` accepts the following settings:
