@@ -51,7 +51,7 @@ tape('metalsmith "done" callback is called when pager plugin terminates its exec
   }
 
   const metalsmith = {
-    _source: '',
+    source: () => '',
     metadata: function() {
       return {
         collections: {
@@ -111,7 +111,7 @@ tape('the "pagination" property is populated with the paginated data (pagination
   }
 
   const metalsmith = {
-    _source: '',
+    source: () => '',
     metadata: function() {
       return {
         collections: {

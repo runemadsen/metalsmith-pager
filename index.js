@@ -37,7 +37,7 @@ exports = module.exports = function pager(options){
     const metadata = metalsmith.metadata();
 
 
-    const template = fs.readFileSync(path.join(metalsmith._source, options.paginationTemplatePath));
+    const template = fs.readFileSync(path.join(metalsmith.source(), options.paginationTemplatePath));
 
 
     let groupedPosts;
