@@ -83,17 +83,16 @@ exports = module.exports = function pager(options){
 
     const pagesInfo = [...pageKeys].map((el, i) => ({ path: el, index: i+1, label: pageLabel.replace(/:PAGE/, i+1) }));
 
+    if(options.index && !files[options.index]) {
+      files[options.index] = files[pagePattern.replace(/:PAGE/, 1)]
+      pagesInfo[0].path = options.index;
+    }
+
     pagesInfo.forEach(function(el, i, all){
       files[el.path].pages = all;
       files[el.path].pagination.prev = i > 0 ? all[i-1].path : null;
       files[el.path].pagination.next = i < all.length-1 ? all[i+1].path : null;
     });
-
-    if (options.index && type(files[options.index]) == 'object'){
-      files[options.index].pagination = files[pagePattern.replace(/:PAGE/, 1)].pagination;
-      files[options.index].pages = pagesInfo;
-    }
-
 
     done();
 
