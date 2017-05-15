@@ -148,26 +148,25 @@ tape('the "pagination" property is populated with the paginated data (pagination
   const doneSpy = sinon.spy();
 
   let readFileSync = sinon.stub(fs, 'readFileSync').returns('hbs contents');
+  let pages = ['boom.html', '2/index.html', '3/index.html'];
 
   pager(files, metalsmith, doneSpy);
 
-  t.ok(files.hasOwnProperty('1/index.html') && files.hasOwnProperty('2/index.html') && files.hasOwnProperty('3/index.html'), 'check props');
+  pages.forEach(function(page, i){
 
-  ['1/index.html', '2/index.html', '3/index.html'].forEach(function(prop, i) {
-    t.ok(files.hasOwnProperty(prop), 'check props');
+    t.ok(files.hasOwnProperty(page, 'check props'));
 
-    t.equal(files[prop].pages.length, 3, 'check number of pages');
-    t.equal(files[prop].pages.map(x => x.label)[i], '<'+(i+1)+'>', 'check page label');
+    t.equal(files[page].pages.length, pages.length, 'check number of pages');
+    t.equal(files[page].pages.map(x => x.label)[i], '<'+(i+1)+'>', 'check page label');
 
-    t.equal(files[prop].contents, 'hbs contents', 'check contents');
-    t.equal(files[prop].layout, 'archive.html', 'check layout');
+    t.equal(files[page].contents, 'hbs contents', 'check contents');
+    t.equal(files[page].layout, 'archive.html', 'check layout');
 
-    t.equal(files[prop].pagination.files.length, i<2 ? 3 : 2, 'check files per page (page '+prop+')');
 
+    t.equal(files[page].pagination.files.length, i<2 ? 3 : 2, 'check files per page (page '+page+')');
+    if(i > 0) t.equal(files[page].pagination.prev, pages[i-1], 'check previous');
+    if(i < 2) t.equal(files[page].pagination.next, pages[i+1], 'check next');
   });
-
-  t.deepEqual(files['boom.html'].pagination, files['1/index.html'].pagination, 'check index pagination');
-  t.deepEqual(files['boom.html'].pages, files['1/index.html'].pages, 'check index pagination links');
 
   t.ok(!files.hasOwnProperty('4/index.html'), 'check props missing');
 
