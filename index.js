@@ -53,7 +53,7 @@ exports = module.exports = function pager(options){
 
       if(!pageKeys.has(pageDist)){
         pageKeys.add(pageDist);
-        files[pageDist] = {
+        files[pageDist] = Object.assign({}, files[pageDist], {
           canonical: pageDist,
           contents: template,
           layout: options.layoutName,
@@ -61,7 +61,7 @@ exports = module.exports = function pager(options){
             current: currentPage,
             files: []
           }
-        }
+        });
       }
 
       files[pageDist].pagination.files.push(post);
