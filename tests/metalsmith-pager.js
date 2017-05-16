@@ -154,7 +154,7 @@ tape('the "pagination" property is populated with the paginated data (pagination
 tape('an index.html page is not created with obmission of the index property', function(t) {
 
   const options = {
-    collection: 'posts',
+    collection: 'pages',
     elementsPerPage: 3,
     pagePattern: ':PAGE/index.html',
     pageLabel: '<:PAGE>',
@@ -166,15 +166,7 @@ tape('an index.html page is not created with obmission of the index property', f
 
   const files = {
     '/post1': { collection: ['pages'], contents: new Buffer('Hello world!') },
-    '/post2': { collection: ['posts', 'pages'], contents: new Buffer('This is both a post both a page.') },
-    '/post3': { collection: ['pages', 'posts'], contents: new Buffer('This is both a page both a post. Strange.') },
-    '/post4': { collection: ['posts'], contents: new Buffer('Yeah, really strange!') },
-    '/post5': { collection: ['posts'], contents: new Buffer('Cool Stuff.') },
-    '/post6': { collection: ['posts'], contents: new Buffer('The sixth post.') },
-    '/post7': { collection: ['posts'], contents: new Buffer('Just another post.') },
-    '/post8': { collection: ['posts'], contents: new Buffer('Almost done here.') },
-    '/post9': { collection: [], contents: new Buffer('This is nothing.') },
-    '/post10': { collection: ['posts'], contents: new Buffer('Latest is a post! YAHOO.') },
+    '/post2': { collection: ['pages'], contents: new Buffer('This is both a post both a page.') },
   }
 
   const metalsmith = metalSmithFromFiles(files)
