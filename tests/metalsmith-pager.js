@@ -1,12 +1,36 @@
-
 'use strict';
 
 const fs = require('fs');
-
 const tape = require('tape');
 const sinon = require('sinon');
-
 const sut = require('../index');
+
+function metalSmithFromFiles(files) {
+
+  const collections = {}
+  Object.keys(files).forEach(function(key) {
+    if(files[key].collection) {
+      files[key].collection.forEach(function(col) {
+        if(!collections[col]) {
+          collections[col] = []
+        }
+        collections[col].push({
+          path: key,
+          contents: Buffer.from(files[key].contents)
+        })
+      })
+    }
+  })
+
+  return {
+    source: () => '',
+    metadata: function() {
+      return {
+        collections: collections
+      };
+    }
+  }
+}
 
 tape('metalsmith-pager.js:', function(t) { t.end(); });
 
@@ -50,22 +74,7 @@ tape('metalsmith "done" callback is called when pager plugin terminates its exec
     '/post2': { collection: ['posts'], contents: new Buffer('Latest is a post! YAHOO.') },
   }
 
-  const metalsmith = {
-    source: () => '',
-    metadata: function() {
-      return {
-        collections: {
-          posts: [{
-            path: '/post1',
-            contents: new Buffer('Hello world!')
-          }, {
-            path: '/post2',
-            contents: new Buffer('Latest is a post! YAHOO.')
-          }]
-        }
-      };
-    }
-  }
+  const metalsmith = metalSmithFromFiles(files)
 
   const doneSpy = sinon.spy();
 
@@ -95,7 +104,6 @@ tape('the "pagination" property is populated with the paginated data (pagination
 
   const pager = sut(options);
 
-
   const files = {
     'boom.html': { contents: new Buffer('The index!') },
     '/post1': { collection: ['pages'], contents: new Buffer('Hello world!') },
@@ -110,40 +118,7 @@ tape('the "pagination" property is populated with the paginated data (pagination
     '/post10': { collection: ['posts'], contents: new Buffer('Latest is a post! YAHOO.') },
   }
 
-  const metalsmith = {
-    source: () => '',
-    metadata: function() {
-      return {
-        collections: {
-          posts: [{
-            path: '/post2',
-            contents: new Buffer('This is both a post both a page.')
-          }, {
-            path: '/post3',
-            contents: new Buffer('This is both a page both a post. Strange.')
-          }, {
-            path: '/post4',
-            contents: new Buffer('Yeah, really strange!')
-          }, {
-            path: '/post5',
-            contents: new Buffer('Cool Stuff.')
-          }, {
-            path: '/post6',
-            contents: new Buffer('The sixth post.')
-          }, {
-            path: '/post7',
-            contents: new Buffer('Just another post.')
-          }, {
-            path: '/post8',
-            contents: new Buffer('Almost done here.')
-          }, {
-            path: '/post10',
-            contents: new Buffer('Latest is a post! YAHOO.')
-          }]
-        }
-      };
-    }
-  }
+  const metalsmith = metalSmithFromFiles(files)
 
   const doneSpy = sinon.spy();
 
@@ -169,6 +144,48 @@ tape('the "pagination" property is populated with the paginated data (pagination
   });
 
   t.ok(!files.hasOwnProperty('4/index.html'), 'check props missing');
+
+  readFileSync.restore();
+
+  t.end();
+
+});
+
+tape('an index.html page is not created with obmission of the index property', function(t) {
+
+  const options = {
+    collection: 'posts',
+    elementsPerPage: 3,
+    pagePattern: ':PAGE/index.html',
+    pageLabel: '<:PAGE>',
+    paginationTemplatePath: '__partials/pagination.html',
+    layoutName: 'archive.html'
+  };
+
+  const pager = sut(options);
+
+  const files = {
+    '/post1': { collection: ['pages'], contents: new Buffer('Hello world!') },
+    '/post2': { collection: ['posts', 'pages'], contents: new Buffer('This is both a post both a page.') },
+    '/post3': { collection: ['pages', 'posts'], contents: new Buffer('This is both a page both a post. Strange.') },
+    '/post4': { collection: ['posts'], contents: new Buffer('Yeah, really strange!') },
+    '/post5': { collection: ['posts'], contents: new Buffer('Cool Stuff.') },
+    '/post6': { collection: ['posts'], contents: new Buffer('The sixth post.') },
+    '/post7': { collection: ['posts'], contents: new Buffer('Just another post.') },
+    '/post8': { collection: ['posts'], contents: new Buffer('Almost done here.') },
+    '/post9': { collection: [], contents: new Buffer('This is nothing.') },
+    '/post10': { collection: ['posts'], contents: new Buffer('Latest is a post! YAHOO.') },
+  }
+
+  const metalsmith = metalSmithFromFiles(files)
+
+  const doneSpy = sinon.spy();
+
+  let readFileSync = sinon.stub(fs, 'readFileSync').returns('hbs contents');
+
+  pager(files, metalsmith, doneSpy);
+
+  t.ok(!files.hasOwnProperty('index.html'), 'check index.html missing');
 
   readFileSync.restore();
 
